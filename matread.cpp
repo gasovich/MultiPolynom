@@ -10,7 +10,8 @@ int main()
 {
 	int n_col = 0;
 	int n_row = 0;
-	int** matrix;
+	double** matrix;
+	double* row;
 	double x;
 	string s;
 	
