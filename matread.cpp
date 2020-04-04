@@ -4,28 +4,73 @@
 #include <cstdlib>
 #include <cstring>
 
-using namespace std;
 
-int main()
+int main(int argc, char* argv[])
 {
+	using namespace std;
+	
+	struct buffer
+	{
+		double x;
+		buffer* next;
+	} *a, *begin;
+
 	int n_col = 0;
 	int n_row = 0;
-	double** matrix;
-	double* row;
-	double x;
+	int i = 0, j = 0;
 	string s;
+	double **matrix;
 	
-	ifstream fin("matrix2.csv"); // Открыли файл для чтения
-	getline(fin, s);
+	ifstream fin(argv[1]); // Открыли файл для чтения
+	
+	a = new buffer;
+	begin = a;
+	
+	while (true)
+	{
+		getline(fin, s);
+		if (fin.eof()) break;
+		istringstream st(s);
+		while (true) 
+		{
+			st >> a->x;
+			if (!st) break;
+			a->next = new buffer;
+			a = a->next;
+			j++;
+			if (i == 0)
+				n_col = j;
+		};
+		j = 0;
+		i++;
+		if (i > n_row)
+			n_row = i;
+	};
 	fin.close();
 	
-	istringstream st(s);
-	while (true) 
+	matrix = new double*[n_row];
+	for (i = 0; i < n_row; i++)
+		matrix[i] = new double[n_col];
+		
+	a = begin;
+	for (i = 0; i < n_row; i++)
 	{
-		st >> x;
-		if (!st) break;
-		cout << "x = " << x << "\t" << n_col << endl;
-		n_col++;
+		for (j = 0; j < n_col; j++)
+		{
+			matrix[i][j] = a->x;
+			a = a->next;
+		};
 	};
-	cout << "Прочитано " << n_col << " значений\n";
+		
+	cout << "<--- Матрица --->" << endl;
+	for (i = 0; i < n_row; i++)
+	{
+		for (j = 0; j < n_col; j++)
+			cout << matrix[i][j] << "\t";
+		cout << endl;
+	};
+	
+	for (i = 0; i < n_row; i++)
+		delete []matrix[i];
+	delete []matrix;
 }
